@@ -26,8 +26,8 @@ class NeuralNetwork():
 			layer_errors = np.empty(self.num_layers, dtype=object)
 			layer_deltas = np.empty(self.num_layers, dtype=object)
 			layer_adjustments = np.empty(self.num_layers, dtype=object)
-			
-			layer_errors[-1] = training_set_outputs - output_from_layers[-1]
+			#Order in calculating the error changes the output.
+			layer_errors[-1] = output_from_layers[-1] - training_set_outputs
 			layer_deltas[-1] = layer_errors[-1] * self.__sigmoid_derivative(output_from_layers[-1])
 			for i in range(2, self.num_layers+1):
 				layer_errors[-i] = layer_deltas[-i+1].dot(self.layers[-i+1].synaptic_weights.T)
@@ -38,6 +38,9 @@ class NeuralNetwork():
 			for i in range(1, self.num_layers):
 				layer_adjustments[i] = output_from_layers[i-1].T.dot(layer_deltas[i])
 				self.layers[i].synaptic_weights += layer_adjustments[i] * 0.1
+			#Call think function every iteration, for debug purposes
+			outputs = neural_network.think(np.array([9.282, -2.919]))
+			print( str(iteration) + str(outputs[-1]))
 
 	def think(self, inputs):
 		output_from_layers = np.empty(self.num_layers, dtype=object)
